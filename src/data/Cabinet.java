@@ -54,7 +54,7 @@ public class Cabinet {
         if (x == null) 
             System.out.println("Not found!!!");
         else {
-            System.out.println("Here is the Pet that you want to search");
+            System.out.println("Here is the pet that you want to search");
             x.showProfile();
         }
     }
@@ -64,11 +64,14 @@ public class Cabinet {
         subMenu.addNewOption("1. Updating name");
         subMenu.addNewOption("2. Updating yob");
         subMenu.addNewOption("3. Updating weight");
+        subMenu.addNewOption("4. Quit");
         String id = MyToys.getId("Input pet ID: ", "Pet ID is required!", "^(C|D)\\d{5}$");
         Pet x = checkIt(id);
         if (x == null) 
             System.out.println("Not found!!!");
         else {
+            System.out.println("Here is the pet that you want to update");
+            x.showProfile();
             subMenu.printMenu();
             int choice = subMenu.getChoice();
             switch (choice) {
@@ -79,14 +82,70 @@ public class Cabinet {
                     x.setYob(MyToys.getAnInteger("Input pet yob (2000..2024): ", "Yob is required ", 2000, 2024));
                     break;
                 case 3:
-                    
+                    x.setWeight(MyToys.getADouble("Input pet weight (0.1->99.0): ", "Weight is required", 0.1, 99.0));
                     break;
                 case 4:
-                    
+                    System.out.println("The pet info is updated unsuccessfully!");
+                    return;
+            }
+            System.out.println("The pet profile after updating");
+            x.showProfile();
+            System.out.println("The pet info is updated successfully!");
+        }
+    }   
+    
+    public void removePetByID() {
+        String id = MyToys.getId("Input pet ID: ", "Pet ID is required!", "^(C|D)\\d{5}$");
+        Pet x = checkIt(id);
+        if (x == null) 
+            System.out.println("Not found!!!");
+        else {
+            System.out.println("Here is the pet that you want to remove");  // In ra thông tin pet bị removed
+            x.showProfile();
+            String choice = MyToys.getString("Are you sure? (Yes/No): ", "You are required to input your choice (Yes/No)");
+            switch (choice.toLowerCase()) {
+                case "yes":
+                    petList.remove(x);
+                    System.out.println("The selected pet is removed successfully!");
+                    break;
+                case "no":
+                    System.out.println("The selected pet is removed unsuccessfully!");
                     break;
             }
         }
-    }   
+    }
+    
+    public void printPetListAscendingByID() {
+        if (petList.isEmpty()) {
+            System.out.println("The cage is empty. Nothing to print!");
+            return;
+        }
+        System.out.println("Here is the pet list");
+        String header = String.format("|%-6s|%-15s|%4s|%4s|%4s|", "ID", "NAME", "YOB", "WGHT", "SPD");
+        System.out.println(header);
+        Collections.sort(petList);
+        for (Pet x : petList) 
+            x.showProfile();
+    }
+    
+    public void printPetListAscendingByName() {
+        if (petList.isEmpty()) {
+            System.out.println("The cage is empty. Nothing to print!");
+            return;
+        }
+        Comparator<Pet> nameBalance = new Comparator<Pet>() {
+            @Override
+            public int compare(Pet o1, Pet o2) {
+                return o1.getName().compareToIgnoreCase(o2.getName());
+            }
+        };
+        Collections.sort(petList, nameBalance);
+        System.out.println("Here is the pet list");
+        String header = String.format("|%-6s|%-15s|%4s|%4s|%4s|", "ID", "NAME", "YOB", "WGHT", "SPD");
+        System.out.println(header);
+        for (Pet x : petList) 
+            x.showProfile();
+    }
     
     public Pet checkIt(String id) {
         if (petList.isEmpty()) 
@@ -96,7 +155,5 @@ public class Cabinet {
                 return petList.get(i);
         return null;
     }
-    
-   
     
 }
